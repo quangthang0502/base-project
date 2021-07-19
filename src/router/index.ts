@@ -1,30 +1,50 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
-import Home from "../views/Home.vue";
+import Vue from 'vue'
+import VueRouter, { RouteConfig } from 'vue-router'
+import Home from '../views/Home.vue'
+import Layout from '../components/layout/Layout.vue'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: '/',
+    // name: 'home',
+    // component: Home,
+    component: Layout,
+    meta: {
+      isNotAuth: true
+    },
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: Home
+      }
+    ]
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
-];
+    path: '*',
+    name: 'notFound',
+    component: () => import('@/views/404.vue'),
+    meta: {
+      isNotAuth: true
+    }
+  }
+]
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
-  routes,
-});
+  routes
+})
 
-export default router;
+router.beforeEach(async (to, from, next) => {
+  if (to.meta?.isNotAuth) {
+    next()
+    return
+  }
+  console.log('check auth')
+  next()
+})
+
+export default router

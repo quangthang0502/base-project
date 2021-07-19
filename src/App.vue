@@ -1,32 +1,26 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+  <div id="app" :class="theme">
     <router-view />
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+  import { Component, Vue } from 'vue-property-decorator'
+  import { namespace } from 'vuex-class'
+  import { getRepo } from './services'
 
-#nav {
-  padding: 30px;
+  const theme = namespace('theme')
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  @Component
+  export default class App extends Vue {
+    @theme.State('theme') theme!: string
 
-    &.router-link-exact-active {
-      color: #42b983;
+    async created(): Promise<void> {
+      const a = getRepo('example', 'example')
+      const data = await a?.all()
+      console.log(data)
     }
   }
-}
-</style>
+</script>
+
+<style lang="scss"></style>
